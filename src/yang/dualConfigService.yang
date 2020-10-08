@@ -1,0 +1,67 @@
+module dualConfigService {
+
+  namespace "http://www.cisco.com/trainingExamples/dualConfigService";
+  prefix cisco-trn-dualConfigService;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  revision 2020-09-01 { 
+    description "Version 1.0.0.0 of the service with ACL support.";
+  }
+
+  augment /ncs:services {
+    list dualConfigService {
+      tailf:info "Service for IP blacklist ACL support";
+      key name;
+
+      uses ncs:service-data;
+      ncs:servicepoint "dualConfigService-svcpoint";
+
+      leaf name {
+        tailf:info "Service instance name - extended ACL name applied to our devices";
+        type string;
+      }
+      
+      list device {
+        tailf:info "List of devices where IP access list is applied";
+        key name;
+        min-elements 1;
+        
+        
+        leaf name {
+          tailf:info "Device name";
+          type leafref {
+            path "/ncs:devices/ncs:device/ncs:name"; 
+          }
+        }
+      }
+
+      list blacklist-common {
+        tailf:info "List of blacklisted IPs common to all devices";
+        key "ip-address";
+
+        leaf ip-address {
+          tailf:info "IP address";
+          type inet:ipv4-address;
+          mandatory true;
+        }
+
+        leaf description {
+          tailf:info "Additional entry description";
+          type string;
+        }
+      }
+
+    }
+  }
+}
