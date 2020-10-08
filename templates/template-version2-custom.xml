@@ -1,0 +1,24 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device tags="merge">
+      <name>{$DEVICENAME}</name>
+      <config>
+        <ip xmlns="urn:ios">
+          <access-list>
+            <extended>
+              <ext-named-acl tags="merge">
+                <name>{$DCS_NAME}</name>
+                <!-- introduced in version 2 -->
+                <!-- we assign custom ips, device specific -->
+                  <ext-access-list-rule>
+                    <rule>deny {$IPADDRESS} any</rule>
+                  </ext-access-list-rule>
+                <!-- introduced in version 2 END -->
+              </ext-named-acl>
+            </extended>
+          </access-list>
+        </ip>
+      </config>
+    </device>
+  </devices>
+</config-template>

@@ -1,0 +1,24 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{/device/name}</name>
+      <config>
+        <ip xmlns="urn:ios">
+          <access-list>
+            <extended>
+              <ext-named-acl tags="merge">
+                <name>{/name}</name>
+                <!-- we loop through each entry for all devices (common list)-->
+                <?foreach {blacklist-common}?>
+                  <ext-access-list-rule>
+                    <rule>deny {ip-address} any</rule>
+                  </ext-access-list-rule>
+                <?end?>
+              </ext-named-acl>
+            </extended>
+          </access-list>
+        </ip>
+      </config>
+    </device>
+  </devices>
+</config-template>

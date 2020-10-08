@@ -15,6 +15,16 @@ module dualConfigService {
     prefix tailf;
   }
 
+  revision 2020-10-07 { 
+    description "Version 2.0.0.0 of the service with additional 
+    support for ACLs defined per device (custom per device).
+    
+    Migration procedure is introduced which applies configuration
+    based on the configurationVersion parameter for existing instances
+    (template selection), for completely new instances, new templates are used.
+    ";
+  }
+
   revision 2020-09-01 { 
     description "Version 1.0.0.0 of the service with ACL support.";
   }
@@ -26,6 +36,16 @@ module dualConfigService {
 
       uses ncs:service-data;
       ncs:servicepoint "dualConfigService-svcpoint";
+
+      // this is a new structure in v2
+      leaf configurationVersion {
+        tailf:info "Package migration info, logic applies old or new template based on the parameter.";
+        type enumeration {
+          enum v1 { value 1; }
+          enum v2 { value 2;}
+        }
+        default v1;
+      }
 
       leaf name {
         tailf:info "Service instance name - extended ACL name applied to our devices";
@@ -42,6 +62,23 @@ module dualConfigService {
           tailf:info "Device name";
           type leafref {
             path "/ncs:devices/ncs:device/ncs:name"; 
+          }
+        }
+
+        // this is a new structure in v2
+        list blacklist-custom {
+          tailf:info "List of blacklisted IPs custom to this device";
+          key "ip-address";
+
+          leaf ip-address {
+            tailf:info "IP address";
+            type inet:ipv4-address;
+            mandatory true;
+          }
+
+          leaf description {
+            tailf:info "Additional entry description";
+            type string;
           }
         }
       }
